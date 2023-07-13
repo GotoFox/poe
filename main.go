@@ -8,13 +8,19 @@ import (
 	"strconv"
 )
 
-func main() {
+func handler(c *gin.Context) {
 	conf.Setup()
 	poe.Setup()
-	engine := gin.Default()
-	router.Setup(engine)
-	err := engine.Run(":" + strconv.Itoa(conf.Conf.Port))
-	if err != nil {
+	router.Setup(c)
+}
+
+func main() {
+	engine := gin.New()
+	engine.GET("/*path", handler)
+	engine.POST("/*path", handler)
+
+	port := strconv.Itoa(conf.Conf.Port)
+	if err := engine.Run(":" + port); err != nil {
 		panic(err)
 	}
 }
